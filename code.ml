@@ -2,7 +2,7 @@
 module Code :
      sig
      (** Le type d'un pion *)
-     type pion = (* A COMPLETER *)
+     type pion = int
 
      (** Le type d'un code *)
      type t = pion list
