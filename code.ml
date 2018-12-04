@@ -85,5 +85,33 @@ module Code :
 
      let string_of_code liste_pion = List.fold_left (fun acc elem -> acc^(int2color elem)^" | ") " | " liste_pion;;
 
+     (** Ligne de commande a rentrer avant cette fonction pour qu elle fonctionne :   #load "str.cma";; *)
+     let split_code str = Str.split (Str.regexp "|") str;;    
+
+
+     let color2int color =
+        match color with
+            |"Rouge"->1
+            |"Bleu"->2
+            |"Vert"->3
+            |"Jaune"->4
+            |"Violet"->5
+            |"Blanc"->6
+            |_->(-1);;
+
+
+
+     let code_of_string str = 
+        let list_split = (split_code str) in 
+          let rec code_of_stringRT list_split acc =
+            match list_split with 
+              |[]->acc 
+              |h :: t -> code_of_stringRT t (acc@([color2int h]))
+
+
+
+      in code_of_stringRT list_split [];;
+
+
 
      end;;
