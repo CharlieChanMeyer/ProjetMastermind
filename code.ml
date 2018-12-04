@@ -71,4 +71,19 @@ module Code :
           List.fold_left (fun acc x -> cmp x (List.nth code_s (liste_search code_p x 0))) 0 code_p;;
 
 
+     let int2color valeur = 
+        match valeur with
+          |1->"Rouge"
+          |2->"Bleu"
+          |3->"Vert"
+          |4->"Jaune"
+          |5->"Violet"
+          |6->"Blanc"
+          |_->"pas une couleur";;
+
+
+
+     let string_of_code liste_pion = List.fold_left (fun acc elem -> acc^(int2color elem)^" | ") " | " liste_pion;;
+
+
      end;;
