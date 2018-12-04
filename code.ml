@@ -52,10 +52,23 @@ module Code :
      end =
      struct
 
+     type pion = int;;
+
+     type t = pion list;;
+
      let nombre_pions = 4;;
 
      let couleurs_possibles = [1;2;3;4;5;6];;
 
-     
+     let cmp n1 n2 = (n1 - n2);;
+
+     let rec liste_search liste mb acc =
+          match liste with
+               | (mp :: suite) when (mp = mb) -> acc
+               | _                            -> liste_search (List.tl liste) mb acc+1;;
+
+     let compare code_p code_s =
+          List.fold_left (fun acc x -> cmp x (List.nth code_s (liste_search code_p x 0))) 0 code_p;;
+
 
      end;;
