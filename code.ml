@@ -52,4 +52,10 @@ module Code :
      end =
      struct
 
+     let nombre_pions = 4;;
+
+     let couleurs_possibles = [1;2;3;4;5;6];;
+
+     
+
      end;;
