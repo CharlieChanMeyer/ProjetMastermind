@@ -100,18 +100,19 @@ module Code :
             |_->(-1);;
 
 
-
      let code_of_string str = 
         let list_split = (split_code str) in 
           let rec code_of_stringRT list_split acc =
             match list_split with 
-              |[]->acc 
-              |h :: t -> code_of_stringRT t (acc@([color2int h]))
+              |[]->Some(acc)
+              |h :: t -> if color2int h = -1 then
+                            None
+                          else
+                            code_of_stringRT t (acc@([color2int h]))
 
 
 
       in code_of_stringRT list_split [];;
-
-
+  
 
      end;;
