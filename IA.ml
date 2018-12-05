@@ -1,5 +1,5 @@
 (** Algorithmes de recherche de code *)
-#use "code.ml";;
+#use "methode_knuth.ml";;
 
 module IA :
      sig
