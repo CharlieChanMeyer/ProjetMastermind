@@ -21,7 +21,7 @@ module IA :
                         1 pour l'algorithme de KNUTH
                         ... et ainsi de suite
        * @param (code, rep) le code essaye et la reponse correspondante
-       * @param  liste_de_code la liste courante de codes possibles
+       * @param  possibles la liste courante de codes possibles
        * @return la nouvelle liste de codes possibles
        *)
      val filtre : int -> (Code.t * (int * int) option) -> Code.t list -> Code.t list
