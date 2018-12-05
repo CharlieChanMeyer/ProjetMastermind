@@ -1,4 +1,6 @@
 (** Algorithmes de recherche de code *)
+#use "code.ml";;
+
 module IA :
      sig
      (** Nombre d'algorithmes developpes *)
@@ -23,4 +25,10 @@ module IA :
        * @return la nouvelle liste de codes possibles
        *)
      val filtre : int -> (Code.t * (int * int) option) -> Code.t list -> Code.t list
+     end =
+     struct
+
+     let nombre_methodes = 2;;
+
+
 end ;;
