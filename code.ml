@@ -110,9 +110,24 @@ module Code :
                           else
                             code_of_stringRT t (acc@([color2int h]))
 
-
-
       in code_of_stringRT list_split [];;
   
+
+      let list_couples nb_pions =
+         let rec list_couples_RT nb_pions acc acc2 liste_acc =
+            match acc with
+              |valeur when valeur <= (nb_pions-acc2) -> list_couples_RT nb_pions (acc+1) acc2 (liste_acc@[(acc2,valeur)])
+              |valeur when (acc2<nb_pions) ->let acc =(-1) in list_couples_RT nb_pions (acc+1) (acc2+1) (liste_acc@[(acc2,valeur)])
+              |_->liste_acc
+
+        in list_couples_RT nb_pions 0 0 [];;
+
+
+      let toutes_reponses nb_pions = List.filter(fun (x,y) -> x+y<=nb_pions) (list_couples nb_pions);;
+
+
+
+
+
 
      end;;
