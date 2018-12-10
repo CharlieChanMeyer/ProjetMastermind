@@ -130,7 +130,7 @@ module Code :
         in list_couples_RT nb_pions 0 0 [];;
 
 
-      let toutes_reponses nb_pions = List.filter(fun (x,y) ->  (x+y<=nb_pions) && ((x,y)<>(nb_pions-1,1)) ) (list_couples nb_pions);;
+      let toutes_reponses = List.filter(fun (x,y) ->  (x+y<=nombre_pions) && ((x,y)<>(nombre_pions-1,1)) ) (list_couples nombre_pions);;
 
 
 
