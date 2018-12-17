@@ -1,3 +1,5 @@
+#load "str.cma";;
+
 (** Module de definition d'un code dans le jeu Mastermind *)
 module Code :
      sig
@@ -149,6 +151,65 @@ module Code :
           | h :: t -> reponseBienPlaceAcc t (List.tl vrai_code) acc 
 
       in reponseBienPlaceAcc code vrai_code 0;;
+
+
+
+      let replace_nth l elem pos =
+        let rec replace_nthAcc l elem pos acc acc_liste =
+          match l with
+          | [] -> acc_liste
+          | h :: t when acc=pos -> replace_nthAcc t elem pos (acc+1) acc_liste@[elem] 
+          | h :: t -> replace_nthAcc t elem pos (acc+1) (acc_liste)@[h]
+
+        in let new_l= replace_nthAcc l elem pos 0 [] in 
+              List.rev new_l;;
+
+
+
+(* Prend le code choisi et le code a trouver en parametres, s il y a des pions bien places : 
+  remplace dans les positions correspondantes par des (-1) dans le vrai_code *)
+      let replace_bien_place code vrai_code = 
+        let rec replace_bien_placeRT code vrai_code acc =
+          match code with
+          | [] -> acc
+          | h :: t when h = (List.hd vrai_code) -> replace_bien_placeRT t (List.tl vrai_code) acc@[(-1)]
+          | h :: t ->replace_bien_placeRT t (List.tl vrai_code) acc@[List.hd vrai_code] 
+
+        in let new_l = replace_bien_placeRT code vrai_code []
+            in List.rev new_l;;
+
+
+
+        let copie_moins_un code vrai_code_modif =
+          let rec copie_moins_unRT code vrai_code_modif acc =
+            match code with
+            | [] -> acc
+            | h :: t when (List.hd vrai_code_modif)=(-1) -> copie_moins_unRT t (List.tl vrai_code_modif) acc@[(-1)]
+            | h :: t -> copie_moins_unRT t (List.tl vrai_code_modif ) acc@[h]
+
+          in let new_l = copie_moins_unRT code vrai_code_modif [] in
+            List.rev new_l;;
+
+     let reponseMalPlace code vrai_code =
+        let vrai_code_modif = replace_bien_place code vrai_code in
+          let code_modif = copie_moins_un code vrai_code_modif in
+        let rec reponseMalPlaceAcc code_modif vrai_code_modif acc pos =
+          match code_modif with
+          | [] -> acc
+          | h :: t when h=(List.nth vrai_code_modif pos) -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) acc (pos+1) 
+          | h :: t when (nb_fois_present h vrai_code_modif)<>0 -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) (acc+1) (pos+1) 
+          | h :: t when (nb_fois_present h vrai_code_modif)=0 -> reponseMalPlaceAcc t vrai_code_modif acc (pos+1) 
+
+        in reponseMalPlaceAcc code_modif vrai_code_modif 0 0;; 
+
+
+      let existence_valeur_negative code = List.exists (fun x -> x<0) code;;
+
+     let reponse code vrai_code = 
+        match code with
+        | l when List.length l <> List.length vrai_code -> None
+        | l when existence_valeur_negative l -> None
+        | _ -> Some((reponseBienPlace code vrai_code), (reponseMalPlace code vrai_code)) ;;
 
 
      end;;
