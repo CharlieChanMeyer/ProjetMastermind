@@ -13,11 +13,31 @@ let verif_nb_partie nb_partie =
 let rec mastermindRT joueur nb_tentative nb_partie auto acc_partie =
      match (acc_partie) with
           | (nb,_) when (nb=nb_partie+1) -> ()
-          | (1,true)                          -> (let partie = joueurjoue in mastermindRT joueur nb_tentative nb_partie auto (2,false))
-          | (1,false)                         -> (let partie = ordijoue auto in mastermindRT joueur nb_tentative nb_partie auto (2,true))
-          | (nb,true)                         -> (let partie = joueurjoue in mastermindRT joueur nb_tentative nb_partie auto (nb+1,false))
-          | (nb,false)                        -> (let partie = ordijoue auto in mastermindRT joueur nb_tentative nb_partie auto (nb+1,true));;
-
+          | (1,true)                          -> (
+               let partie = joueurjoue nb_tentative in
+                    mastermindRT joueur nb_tentative nb_partie auto (2,false)
+               )
+          | (1,false)                         -> (
+               if (auto) then
+                    let partie = ordijoueauto nb_tentative (1,[0;0;0;0],Code.tous) in
+                         mastermindRT joueur nb_tentative nb_partie auto (2,true)
+               else
+                    let partie = ordijoue nb_tentative (1,[0;0;0;0],Code.tous,false) in
+                         mastermindRT joueur nb_tentative nb_partie auto (2,true)
+               )
+          | (nb,true)                         -> (
+               let partie = joueurjoue nb_tentative in
+                    mastermindRT joueur nb_tentative nb_partie auto (nb+1,false)
+               )
+          | (nb,false)                        -> (
+               if (auto) then
+                    let partie = ordijoueauto nb_tentative (1,[0;0;0;0],Code.tous) in
+                         mastermindRT joueur nb_tentative nb_partie auto (nb+1,true)
+               else
+                    let partie = ordijoue nb_tentative (1,[0;0;0;0],Code.tous,false) in
+                         mastermindRT joueur nb_tentative nb_partie auto (nb+1,true)
+               );;
+               
 let mastermind joueur nb_tentative nb_partie auto =
      let nb_partie = verif_nb_partie nb_partie in
           let debut = Random.bool() in
