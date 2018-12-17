@@ -132,8 +132,23 @@ module Code :
 
       let toutes_reponses = List.filter(fun (x,y) ->  (x+y<=nombre_pions) && ((x,y)<>(nombre_pions-1,1)) ) (list_couples nombre_pions);;
 
+     let nb_fois_present element vrai_code =
+        let rec nb_fois_presentAcc element vrai_code acc =
+          match vrai_code with
+            |[]->acc
+            |h :: t when h=element -> nb_fois_presentAcc element t (acc+1)
+            |h :: t when h<>element -> nb_fois_presentAcc element t acc
 
+        in nb_fois_presentAcc element vrai_code 0;;
 
+     let reponseBienPlace code vrai_code =
+        let rec reponseBienPlaceAcc code vrai_code acc =
+          match code with
+          | [] -> acc
+          | h :: t when h=(List.hd vrai_code) -> reponseBienPlaceAcc t (List.tl vrai_code) (acc+1)
+          | h :: t -> reponseBienPlaceAcc t (List.tl vrai_code) acc 
+
+      in reponseBienPlaceAcc code vrai_code 0;;
 
 
      end;;
