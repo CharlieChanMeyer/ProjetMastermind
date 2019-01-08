@@ -2,7 +2,7 @@
 #load "unix.cma";;
 
 (** Module de definition d'un code dans le jeu Mastermind *)
-module Code =
+module Code :
     sig
      (** Le type d'un pion *)
      type pion = int
