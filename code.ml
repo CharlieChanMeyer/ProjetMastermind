@@ -1,4 +1,5 @@
 #load "str.cma";;
+#load "unix.cma";;
 
 (** Module de definition d'un code dans le jeu Mastermind *)
 module Code =
