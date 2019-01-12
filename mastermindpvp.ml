@@ -104,6 +104,8 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                Unix.system "clear";
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
+               afficher_plateau liste 1;
+
                let proposition = main_prop nb in
                     let Some(nbp,nmp) = Code.reponse proposition code_secret in
                          Unix.system "clear";
@@ -116,8 +118,6 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                                         let res = 1 in res)
                                    else
                                         let liste = liste @ [(proposition,(nbp,nmp))] in
-                                             afficher_plateau liste 1;
-                                             Unix.sleep 1;
                                              joueurjoueRT joueur1 joueur2 nb_tentative code_secret (nb+1,liste))
                               else
                                    (print_endline (joueur1 ^" a gagné car " ^ joueur2 ^ " a triché.");
