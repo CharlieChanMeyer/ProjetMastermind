@@ -30,14 +30,12 @@ module IA :
 
      let nombre_methodes = 2;;
 
-     Knuth.mini (List.tl possibles) (List.hd possibles)
-
      let choix methode essais possibles =
           match (methode) with
                | 0 -> List.nth (possibles) 0
                | _ -> (
-                    let rep = Code.reponse (List.hd possible) (List.hd(List.rev essais)) in
-                         let res = liste_codes_meme_score_maximum possibles rep in
+                    let rep = Code.reponse (List.hd possibles) (List.hd(List.rev essais)) in
+                         let res = Knuth.liste_codes_meme_score_maximum possibles rep in
                               Knuth.mini (List.tl res) (List.hd res)
                     );;
 

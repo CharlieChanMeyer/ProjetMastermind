@@ -141,7 +141,7 @@ module Knuth (*:
           let rec calcule_scoreRT liste_codes code couple_reponse acc =
                match liste_codes with
                     | []                                               -> acc
-                    | h :: t when ((reponse code h) <> couple_reponse) -> calcule_scoreRT t code couple_reponse (acc+1)
+                    | h :: t when ((Code.reponse code h) <> couple_reponse) -> calcule_scoreRT t code couple_reponse (acc+1)
                     | _                                                -> calcule_scoreRT (List.tl liste_codes) code couple_reponse acc
 
           in calcule_scoreRT liste_codes code couple_reponse 0 ;;
