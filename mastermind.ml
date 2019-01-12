@@ -1,5 +1,5 @@
 (** Module principal du jeu Mastermind *)
-#use "IA_local.ml";;
+#use "IA.ml";;
 
 module Mastermind :
      sig
