@@ -128,4 +128,44 @@ module Knuth (*:
                                mini suite acc
                      );;
 
+
+let max_liste liste =
+  let rec max_listeRT liste acc =
+    match liste with
+    | [] -> acc
+    | h :: t when (h > acc) -> max_listeRT t h
+    | _ -> max_listeRT (List.tl liste) acc
+
+  in max_listeRT liste 0 ;;
+
+
+let calcule_score liste_codes code couple_reponse =
+  let rec calcule_scoreRT liste_codes code couple_reponse acc =
+    match liste_codes with
+    | []                                               -> acc
+    | h :: t when ((reponse code h) <> couple_reponse) -> calcule_scoreRT t code couple_reponse (acc+1)
+    | _                                                -> calcule_scoreRT (List.tl liste_codes) code couple_reponse acc
+
+in calcule_scoreRT liste_codes code couple_reponse 0 ;;
+
+
+let calcule_liste_score liste_codes couple_reponse =
+  let rec calcule_liste_scoreRT liste_codes couple_reponse pos acc_liste =
+  match liste_codes with
+  | h :: t when (pos+1) = List.length liste_codes -> acc_liste
+  | _                                             -> calcule_liste_scoreRT liste_codes couple_reponse (pos+1) (acc_liste@[calcule_score liste_codes (List.nth liste_codes (pos+1)) couple_reponse])
+
+in calcule_liste_scoreRT liste_codes couple_reponse (-1) [] ;;
+
+let liste_codes_meme_score_maximum liste_codes couple_reponse =
+  let maximum_liste_score = max_liste ( calcule_liste_score liste_codes couple_reponse) in
+  let rec liste_codes_meme_score_maximumRT liste_codes couple_reponse pos acc =
+    match liste_codes with
+     | h :: t when (pos+1) = List.length liste_codes                                                            -> acc
+     | h :: t when (maximum_liste_score = (calcule_score liste_codes (List.nth liste_codes pos) couple_reponse))-> liste_codes_meme_score_maximumRT liste_codes couple_reponse (pos+1) (acc@[(List.nth liste_codes pos)])
+     | _                                                                                                        -> liste_codes_meme_score_maximumRT liste_codes couple_reponse (pos+1) acc
+
+   in liste_codes_meme_score_maximumRT liste_codes couple_reponse 0 [] ;;
+
+
  end;;
