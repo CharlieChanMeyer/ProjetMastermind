@@ -30,8 +30,6 @@ module IA :
 
      let nombre_methodes = 2;;
 
-     Knuth.mini (List.tl possibles) (List.hd possibles)
-
      let choix methode essais possibles =
           match (methode) with
                | 0 -> List.nth (possibles) 0
