@@ -1,6 +1,5 @@
 (** Algorithmes de recherche de code *)
-#use "methode_knuth.ml";;
-#use "methode_naif.ml";;
+#use "methode.ml";;
 
 module IA :
      sig
@@ -31,27 +30,67 @@ module IA :
 
      let nombre_methodes = 2;;
 
+     Knuth.mini (List.tl possibles) (List.hd possibles)
+
+     let choix methode essais possibles =
+          match (methode) with
+               | 0 -> List.nth (possibles) 0
+               | _ -> (
+                    let rep = Code.reponse (List.hd possible) (List.hd(List.rev essais)) in
+                         let res = liste_codes_meme_score_maximum possibles rep in
+                              Knuth.mini (List.tl res) (List.hd res)
+                    );;
+
+
      let filtre_naif reponse possibles =
           let proposition = fst(reponse) and rep = snd(reponse) in
                match (rep) with
                     | Some(4,0) -> [proposition]
                     | Some(n1,n2) when (n1+n2 = 4) -> let res = Naif.supprime_code4 possibles proposition in res
-                    | Some(n1,n2)                  -> let res = Naif.supprime_couleur possibles proposition in res;;
+                    | Some(n1,n2)                  -> let res = Naif.supprime_couleur possibles proposition (n1+n2) in res;;
+
+     let rec filtre_knuthRT courant proposition rep acc =
+          match (courant) with
+               | [] -> acc
+               | _  -> (
+                    let test = List.hd courant in
+                         let Some(testbp,testmp) = Code.reponse test proposition in
+                              let Some(propbp,propmp) = rep in
+                                   if ((testbp=propbp)&&(testmp=propmp)) then
+                                        filtre_knuthRT (List.tl courant) proposition rep (acc @ [test])
+                                   else
+                                        filtre_knuthRT (List.tl courant) proposition rep acc
+                    );;
+
+     let filtre_knuth reponse possibles =
+          let proposition = fst(reponse) and rep = snd(reponse) in
+               let res = supprime_element possibles proposition in
+                    let res = filtre_knuthRT res proposition rep [] in
+                         res;;
 
      let filtre methode reponse possibles =
           match methode with
-               | 0 -> let res = filtre_naif reponse possibles in res;;
-               (*| 1 -> filtre_knuth reponse possibles;;*)
-
+               | 0 -> let res = filtre_naif reponse possibles in res
+               | 1 -> let res = filtre_knuth reponse possibles in res;;
 
 end ;;
 
 let methode_naif tour courant reponse =
      if tour = 1 then
-          let proposition = Naif.per_p (Code.tous) in
-               let courant = Naif.supprime_element (Code.tous) proposition in
+          let proposition = IA.choix 0 [] courant in
+               let courant = supprime_element (Code.tous) proposition in
                     (proposition,courant)
      else
           let courant = IA.filtre 0 reponse courant in
-               let proposition = Naif.per_p courant in
+               let proposition = IA.choix 0 [] courant in
+                    (proposition,courant)
+
+let methode_knuth tour courant reponse  =
+     if tour = 1 then
+          let proposition = [1;1;2;2] in
+               let courant = supprime_element (Code.tous) proposition in
+                (proposition,courant)
+     else
+          let courant = IA.filtre 1 reponse courant in
+               let proposition = IA.choix 1 [fst(reponse)] courant in
                     (proposition,courant)
