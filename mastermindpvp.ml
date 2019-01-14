@@ -15,7 +15,7 @@ module Mastermindpvp :
      struct
 (** Nettoie le terminal
   *)
-     let clear = ignore(Unix.system "clear");;
+     let clear () = Unix.system "clear"; ();;
 (** Verifie si le nombre de partie est valide
   * @param nb_partie nombre de partie demandé par le joueur
   * @return nombre de partie valide (strictement paire)
@@ -83,13 +83,13 @@ let rec afficher_plateau liste acc=
 let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
      match (acc) with
           | (nb,_) when (nb = nb_tentative) -> (
-               clear;
+               clear ();
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
                let proposition = main_prop nb in
                     match (Code.reponse proposition code_secret) with
                          | Some(nbp,nmp) -> (
-                         clear;
+                         clear ();
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in
@@ -106,7 +106,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                          | _ -> joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc
                     )
           | (nb,liste)                      -> (
-               clear;
+               clear ();
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
                afficher_plateau liste 1;
@@ -114,7 +114,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                let proposition = main_prop nb in
                match (Code.reponse proposition code_secret) with
                     | Some(nbp,nmp) -> (
-                         clear;
+                         clear ();
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in
@@ -142,7 +142,7 @@ let rec joueurjoue joueur1 joueur2 nb_tentative =
           let code_secret = read_line () in
                match (Code.code_of_string code_secret) with
                     | Some(code_secret) -> (
-               clear;
+               clear ();
                print_endline (joueur1 ^ ", devinez la combinaison secrète en " ^ (string_of_int nb_tentative) ^ " coups maximum.");
                Unix.sleep 1;
                joueurjoueRT joueur1 joueur2 nb_tentative code_secret (1,[]))

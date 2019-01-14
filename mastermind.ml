@@ -15,7 +15,7 @@ module Mastermind :
      struct
 (** Nettoie le terminal
   *)
-let clear = ignore(Unix.system "clear");;
+let clear () = Unix.system "clear"; ();;
 (** Definie la methode à utiliser
   * @return 0 si la methode voulu est la methode naïve
             1 si la methode voulu est la methode de knuth
@@ -100,7 +100,9 @@ let rec afficher_plateau_ordi liste acc=
   *)
 let rec joueurjoueRT nb_tentative code_secret acc =
      match (acc) with
-          | (nb,_) when (nb = nb_tentative) -> (
+          | (nb,liste) when (nb = nb_tentative) -> (
+               clear ();
+               afficher_plateau liste 1;
                let proposition = main_prop nb in
                     match (Code.reponse proposition code_secret) with
                          | Some(nbp,nmp) -> (
@@ -113,7 +115,7 @@ let rec joueurjoueRT nb_tentative code_secret acc =
                          | _ -> joueurjoueRT nb_tentative code_secret acc
                )
           | (nb,liste)                      -> (
-               clear;
+               clear ();
                afficher_plateau liste 1;
                let proposition = main_prop nb in
                     match (Code.reponse proposition code_secret) with
