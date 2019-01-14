@@ -13,6 +13,11 @@ module Mastermind :
      val mastermind : string -> int -> int -> bool -> unit
      end=
      struct
+(** Definie la methode à utiliser
+  * @return 0 si la methode voulu est la methode naïve
+            1 si la methode voulu est la methode de knuth
+  *)
+let choix_methode = 1;;
 (** Verifie si le nombre de partie est valide
   * @param nb_partie nombre de partie demandé par le joueur
   * @return nombre de partie valide (strictement paire)
@@ -193,10 +198,76 @@ let rec ordijoueRT_naif nb_tentative code_secret acc =
                                    (print_endline ("L'ordinateur a gagné car vous avez triché.");
                                    let res = 0 in res)
                );;
-
-let rec ordijoueautoRT_knuth nb_tentative liste acc = 1;;  (*A FAIRE*)
-
-let rec ordijoueRT_knuth nb_tentative liste acc = 1;; (*A FAIRE*)
+(** Lance une partie où le joueur doit créer le code
+  * @param nb_tentative le nombre maximale de tentative par partie
+  * @param code_secret le code secret créer par le joueur
+  * @param acc un accumulateur contenant le nb de tour, la liste des codes déjà proposé, la liste des codes possibles, un couple reponse contenant la dernière proposition et le resultat de ce code
+  * @return le score final
+  *)
+let rec ordijoueautoRT_knuth nb_tentative code_secret acc =
+     match (acc) with
+          | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
+               let (proposition,courantp) = methode_knuth nb courant reponse in
+                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                    if (nbp = 4) then
+                         (print_endline ("L'ordinateur a trouvé le code secret, vous avez perdu.");
+                         let res = 0 in res)
+                    else
+                         (print_endline ("L'ordinateur n'a pas trouvé le code secret, vous avez gagné.");
+                         let res = 1 in res)
+               )
+          | (nb,liste,courant,reponse)                          ->(
+               let (proposition,courantp) = methode_knuth nb courant reponse in
+                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                         if (nbp = 4) then
+                              (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                              let res = 0 in res)
+                         else
+                              (let liste = liste @ [proposition] in
+                                   afficher_plateau_ordi liste 1;
+                                   Unix.sleep 1;
+                                   ordijoueautoRT_knuth nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp))))
+               );;
+(** Lance une partie où le joueur doit créer le code
+  * @param nb_tentative le nombre maximale de tentative par partie
+  * @param code_secret le code secret créer par le joueur
+  * @param acc un accumulateur contenant le nb de tour, la liste des codes déjà proposé, la liste des codes possibles, un couple reponse contenant la dernière proposition et le resultat de ce code
+  * @return le score final
+  *)
+let rec ordijoueRT_knuth nb_tentative code_secret acc =
+     match (acc) with
+          | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
+               let (proposition,courantp) = methode_knuth nb courant reponse in
+                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                         let (res1,res2) = prop_res proposition code_secret in
+                              if ((res1 = nbp) && (res2 = nmp)) then
+                                   (if (nbp = 4) then
+                                        (print_endline ("L'ordinateur a trouvé le code secret, vous avez perdu.");
+                                        let res = 0 in res)
+                                   else
+                                        (print_endline ("L'ordinateur n'a pas trouvé le code secret, vous avez gagné.");
+                                        let res = 1 in res))
+                              else
+                                   (print_endline ("L'ordinateur a gagné car vous avez triché.");
+                                   let res = 0 in res)
+               )
+          | (nb,liste,courant,reponse)                          ->(
+               let (proposition,courantp) = methode_knuth nb courant reponse in
+                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                         let (res1,res2) = prop_res proposition code_secret in
+                              if (res1 = nbp) && (res2 = nmp) then
+                                   (if (nbp = 4) then
+                                        (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                                        let res = 0 in res)
+                                   else
+                                        (let liste = liste @ [proposition] in
+                                             afficher_plateau_ordi liste 1;
+                                             Unix.sleep 1;
+                                             ordijoueRT_knuth nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp)))))
+                              else
+                                   (print_endline ("L'ordinateur a gagné car vous avez triché.");
+                                   let res = 0 in res)
+               );;
 (** Lance une partie où le joueur doit créer le code
   * @param joueur nom du joueur
   * @param nb_tentative le nombre maximale de tentative par partie
@@ -206,7 +277,7 @@ let rec ordijoueRT_knuth nb_tentative liste acc = 1;; (*A FAIRE*)
 let rec ordijoue joueur nb_tentative auto =
      print_endline (joueur ^ ", merci de créer le code secret (ex: Rouge|Vert|Jaune|Violet)");
      print_endline (" Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
-     let methode = 0 in
+     let methode = choix_methode in
           let code_secret = read_line () in
                match (Code.code_of_string code_secret) with
                     | None -> ordijoue joueur nb_tentative auto
@@ -220,9 +291,9 @@ let rec ordijoue joueur nb_tentative auto =
                                    )
                               | 1 -> (
                                    if (auto) then
-                                        let res = ordijoueautoRT_knuth nb_tentative liste (1,[],Code.tous) in res
+                                        let res = ordijoueautoRT_knuth nb_tentative liste (1,[],Code.tous,([],Some(0,0))) in res
                                    else
-                                        let res = ordijoueRT_knuth nb_tentative liste (1,[],Code.tous,false) in res
+                                        let res = ordijoueRT_knuth nb_tentative liste (1,[],Code.tous,([],Some(0,0))) in res
                                    )
                          )
                     ;;
