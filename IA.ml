@@ -34,9 +34,12 @@ module IA :
           match (methode) with
                | 0 -> List.nth (possibles) 0
                | _ -> (
-                    let rep = Code.reponse (List.hd possibles) (List.hd(List.rev essais)) in
-                         let res = Knuth.liste_codes_meme_score_maximum possibles rep in
-                              Knuth.mini (List.tl res) (List.hd res)
+                    match (List.length possibles) with
+                         | 1 -> (let [res] = possibles in res)
+                         | _ -> (
+                              let rep = Code.reponse (List.hd possibles) (List.hd(List.rev essais)) in
+                                   let res = Knuth.liste_codes_meme_score_maximum possibles rep in
+                                        Knuth.mini (List.tl res) (List.hd res))
                     );;
 
 
@@ -57,7 +60,7 @@ module IA :
                               | Some(testbp,testmp) -> (
                                    match (rep) with
                                         | Some(propbp,propmp) -> (
-                                             if ((testbp=propbp)&&(testmp=propmp)) then
+                                             if ((testbp=propbp)&&(testmp=propmp) || (testbp = Code.nombre_pions)) then
                                                   filtre_knuthRT (List.tl courant) proposition rep (acc @ [test])
                                              else
                                                   filtre_knuthRT (List.tl courant) proposition rep acc
@@ -69,8 +72,8 @@ module IA :
 
      let filtre_knuth reponse possibles =
           let proposition = fst(reponse) and rep = snd(reponse) in
-               let res = supprime_element possibles proposition in
-                    let res = filtre_knuthRT res proposition rep [] in
+               let res = filtre_knuthRT possibles proposition rep [] in
+                    let res = supprime_element res proposition in
                          res;;
 
      let filtre methode reponse possibles =

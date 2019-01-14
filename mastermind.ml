@@ -13,6 +13,9 @@ module Mastermind :
      val mastermind : string -> int -> int -> bool -> unit
      end=
      struct
+(** Nettoie le terminal
+  *)
+let clear = ignore(Unix.system "clear");;
 (** Definie la methode à utiliser
   * @return 0 si la methode voulu est la methode naïve
             1 si la methode voulu est la methode de knuth
@@ -110,6 +113,8 @@ let rec joueurjoueRT nb_tentative code_secret acc =
                          | _ -> joueurjoueRT nb_tentative code_secret acc
                )
           | (nb,liste)                      -> (
+               clear;
+               afficher_plateau liste 1;
                let proposition = main_prop nb in
                     match (Code.reponse proposition code_secret) with
                          | Some(nbp,nmp) -> (
@@ -118,7 +123,6 @@ let rec joueurjoueRT nb_tentative code_secret acc =
                               let res = 1 in res)
                          else
                               (print_endline((string_of_int nbp) ^ " pions sont bien placés ; " ^ (string_of_int nmp) ^ " pions sont mal placés");
-                              afficher_plateau liste 1;
                               let liste = liste @ [(proposition,(nbp,nmp))] in
                               joueurjoueRT nb_tentative code_secret (nb+1,liste)))
                          | _ -> joueurjoueRT nb_tentative code_secret acc
