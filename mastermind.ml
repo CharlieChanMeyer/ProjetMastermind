@@ -99,17 +99,20 @@ let rec joueurjoueRT nb_tentative code_secret acc =
      match (acc) with
           | (nb,_) when (nb = nb_tentative) -> (
                let proposition = main_prop nb in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                    match (Code.reponse proposition code_secret) with
+                         | Some(nbp,nmp) -> (
                          if (nbp = 4) then
                               (print_endline ("Bravo ! Vous avez trouvé le code secret");
                               let res = 1 in res)
                          else
-                              (print_endline ("Vous avez dépassé le nombre de tentative, vous pavez perdu ! Le code secret était " ^ (Code.string_of_code code_secret));
-                              let res = 0 in res)
+                              (print_endline ("Vous avez dépassé le nombre de tentatives, vous avez perdu ! Le code secret était " ^ (Code.string_of_code code_secret));
+                              let res = 0 in res))
+                         | _ -> joueurjoueRT nb_tentative code_secret acc
                )
           | (nb,liste)                      -> (
                let proposition = main_prop nb in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                    match (Code.reponse proposition code_secret) with
+                         | Some(nbp,nmp) -> (
                          if (nbp = 4) then
                               (print_endline ("Bravo ! Vous avez trouvé le code secret");
                               let res = 1 in res)
@@ -117,7 +120,8 @@ let rec joueurjoueRT nb_tentative code_secret acc =
                               (print_endline((string_of_int nbp) ^ " pions sont bien placés ; " ^ (string_of_int nmp) ^ " pions sont mal placés");
                               afficher_plateau liste 1;
                               let liste = liste @ [(proposition,(nbp,nmp))] in
-                              joueurjoueRT nb_tentative code_secret (nb+1,liste))
+                              joueurjoueRT nb_tentative code_secret (nb+1,liste)))
+                         | _ -> joueurjoueRT nb_tentative code_secret acc
                );;
 (** Lance une partie où le joueur doit créer le code
   * @param joueur le nom du joueur
@@ -138,17 +142,20 @@ let rec ordijoueautoRT_naif nb_tentative code_secret acc =
      match (acc) with
           | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
                let (proposition,courantp) = methode_naif nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+                    match (Code.reponse proposition code_secret) with
+                         | Some(nbp,nmp) -> (
                     if (nbp = 4) then
                          (print_endline ("L'ordinateur a trouvé le code secret, vous avez perdu.");
                          let res = 0 in res)
                     else
                          (print_endline ("L'ordinateur n'a pas trouvé le code secret, vous avez gagné.");
-                         let res = 1 in res)
+                         let res = 1 in res))
+                         | _ -> ordijoueautoRT_naif nb_tentative code_secret acc
                )
           | (nb,liste,courant,reponse)                          ->(
                let (proposition,courantp) = methode_naif nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          if (nbp = 4) then
                               (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
                               let res = 0 in res)
@@ -156,7 +163,8 @@ let rec ordijoueautoRT_naif nb_tentative code_secret acc =
                               (let liste = liste @ [proposition] in
                                    afficher_plateau_ordi liste 1;
                                    Unix.sleep 1;
-                                   ordijoueautoRT_naif nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp))))
+                                   ordijoueautoRT_naif nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp)))))
+                    | _ -> ordijoueautoRT_naif nb_tentative code_secret acc
                );;
 (** Lance une partie où le joueur doit créer le code
   * @param nb_tentative le nombre maximale de tentative par partie
@@ -168,7 +176,8 @@ let rec ordijoueRT_naif nb_tentative code_secret acc =
      match (acc) with
           | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
                let (proposition,courantp) = methode_naif nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          let (res1,res2) = prop_res proposition code_secret in
                               if ((res1 = nbp) && (res2 = nmp)) then
                                    (if (nbp = 4) then
@@ -179,11 +188,13 @@ let rec ordijoueRT_naif nb_tentative code_secret acc =
                                         let res = 1 in res))
                               else
                                    (print_endline ("L'ordinateur a gagné car vous avez triché.");
-                                   let res = 0 in res)
+                                   let res = 0 in res))
+                    | _ -> ordijoueRT_naif nb_tentative code_secret acc
                )
           | (nb,liste,courant,reponse)                          ->(
                let (proposition,courantp) = methode_naif nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          let (res1,res2) = prop_res proposition code_secret in
                               if (res1 = nbp) && (res2 = nmp) then
                                    (if (nbp = 4) then
@@ -196,7 +207,8 @@ let rec ordijoueRT_naif nb_tentative code_secret acc =
                                              ordijoueRT_naif nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp)))))
                               else
                                    (print_endline ("L'ordinateur a gagné car vous avez triché.");
-                                   let res = 0 in res)
+                                   let res = 0 in res))
+                    | _ -> ordijoueRT_naif nb_tentative code_secret acc
                );;
 (** Lance une partie où le joueur doit créer le code
   * @param nb_tentative le nombre maximale de tentative par partie
@@ -208,17 +220,20 @@ let rec ordijoueautoRT_knuth nb_tentative code_secret acc =
      match (acc) with
           | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
                let (proposition,courantp) = methode_knuth nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                     if (nbp = 4) then
                          (print_endline ("L'ordinateur a trouvé le code secret, vous avez perdu.");
                          let res = 0 in res)
                     else
                          (print_endline ("L'ordinateur n'a pas trouvé le code secret, vous avez gagné.");
-                         let res = 1 in res)
+                         let res = 1 in res))
+                    | _ -> ordijoueautoRT_knuth nb_tentative code_secret acc
                )
           | (nb,liste,courant,reponse)                          ->(
                let (proposition,courantp) = methode_knuth nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          if (nbp = 4) then
                               (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
                               let res = 0 in res)
@@ -226,7 +241,8 @@ let rec ordijoueautoRT_knuth nb_tentative code_secret acc =
                               (let liste = liste @ [proposition] in
                                    afficher_plateau_ordi liste 1;
                                    Unix.sleep 1;
-                                   ordijoueautoRT_knuth nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp))))
+                                   ordijoueautoRT_knuth nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp)))))
+                    | _ -> ordijoueautoRT_knuth nb_tentative code_secret acc
                );;
 (** Lance une partie où le joueur doit créer le code
   * @param nb_tentative le nombre maximale de tentative par partie
@@ -238,7 +254,8 @@ let rec ordijoueRT_knuth nb_tentative code_secret acc =
      match (acc) with
           | (nb,liste,courant,reponse) when (nb = nb_tentative) ->(
                let (proposition,courantp) = methode_knuth nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          let (res1,res2) = prop_res proposition code_secret in
                               if ((res1 = nbp) && (res2 = nmp)) then
                                    (if (nbp = 4) then
@@ -249,11 +266,13 @@ let rec ordijoueRT_knuth nb_tentative code_secret acc =
                                         let res = 1 in res))
                               else
                                    (print_endline ("L'ordinateur a gagné car vous avez triché.");
-                                   let res = 0 in res)
+                                   let res = 0 in res))
+                    | _ -> ordijoueRT_knuth nb_tentative code_secret acc
                )
           | (nb,liste,courant,reponse)                          ->(
                let (proposition,courantp) = methode_knuth nb courant reponse in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
                          let (res1,res2) = prop_res proposition code_secret in
                               if (res1 = nbp) && (res2 = nmp) then
                                    (if (nbp = 4) then
@@ -266,7 +285,8 @@ let rec ordijoueRT_knuth nb_tentative code_secret acc =
                                              ordijoueRT_knuth nb_tentative code_secret (nb+1,liste,courantp,(proposition,Some(nbp,nmp)))))
                               else
                                    (print_endline ("L'ordinateur a gagné car vous avez triché.");
-                                   let res = 0 in res)
+                                   let res = 0 in res))
+                    | _ -> ordijoueRT_knuth nb_tentative code_secret acc
                );;
 (** Lance une partie où le joueur doit créer le code
   * @param joueur nom du joueur
@@ -289,7 +309,7 @@ let rec ordijoue joueur nb_tentative auto =
                                    else
                                         let res = ordijoueRT_naif nb_tentative liste (1,[],Code.tous,([],Some(0,0))) in res
                                    )
-                              | 1 -> (
+                              | _ -> (
                                    if (auto) then
                                         let res = ordijoueautoRT_knuth nb_tentative liste (1,[],Code.tous,([],Some(0,0))) in res
                                    else
@@ -311,10 +331,10 @@ let rec mastermindRT joueur nb_tentative nb_partie auto acc_partie acc_score =
      match (acc_partie) with
           | (nb,_) when (nb=nb_partie+1) -> (
                if (score_j>score_o) then
-                    (print_endline ("Bravo, " ^ joueur ^ ", vous avez gagné plus de partie que l'ordinateur !"))
+                    (print_endline ("Bravo, " ^ joueur ^ ", vous avez gagné plus de parties que l'ordinateur !"))
                else
                     (if (score_j=score_o) then
-                         print_endline ("Vous avez gagné autant de partie que l'ordinateur. Egalité !")
+                         print_endline ("Vous avez gagné autant de parties que l'ordinateur. Egalité !")
                     else
                          print_endline ("Dommage, mais vous avez perdu !"))
                )

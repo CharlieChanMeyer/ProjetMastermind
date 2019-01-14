@@ -1,5 +1,5 @@
 (** Module principal du jeu Mastermind *)
-#use "IA.ml";;
+#use "code.ml";;
 
 module Mastermindpvp :
      sig
@@ -13,6 +13,9 @@ module Mastermindpvp :
      val mastermindpvp : string -> string -> int -> int -> unit
      end=
      struct
+(** Nettoie le terminal
+  *)
+     let clear = ignore(Unix.system "clear");;
 (** Verifie si le nombre de partie est valide
   * @param nb_partie nombre de partie demandé par le joueur
   * @return nombre de partie valide (strictement paire)
@@ -80,12 +83,13 @@ let rec afficher_plateau liste acc=
 let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
      match (acc) with
           | (nb,_) when (nb = nb_tentative) -> (
-               Unix.system "clear";
+               clear;
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
                let proposition = main_prop nb in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
-                         Unix.system "clear";
+                    match (Code.reponse proposition code_secret) with
+                         | Some(nbp,nmp) -> (
+                         clear;
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in
@@ -98,17 +102,19 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                                         let res = 0 in res))
                               else
                                    (print_endline (joueur1 ^" a gagné car " ^ joueur2 ^ " a triché.");
-                                   let res = 1 in res)
+                                   let res = 1 in res))
+                         | _ -> joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc
                     )
           | (nb,liste)                      -> (
-               Unix.system "clear";
+               clear;
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
                afficher_plateau liste 1;
 
                let proposition = main_prop nb in
-                    let Some(nbp,nmp) = Code.reponse proposition code_secret in
-                         Unix.system "clear";
+               match (Code.reponse proposition code_secret) with
+                    | Some(nbp,nmp) -> (
+                         clear;
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in
@@ -121,7 +127,8 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                                              joueurjoueRT joueur1 joueur2 nb_tentative code_secret (nb+1,liste))
                               else
                                    (print_endline (joueur1 ^" a gagné car " ^ joueur2 ^ " a triché.");
-                                   let res = 1 in res)
+                                   let res = 1 in res))
+                    | _ -> joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc
           );;
 
 (** Lance une partie où le joueur doit créer le code
@@ -129,16 +136,17 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
   * @param nb_tentative le nombre maximale de tentative par partie
   * @return le score final
   *)
-let joueurjoue joueur1 joueur2 nb_tentative =
+let rec joueurjoue joueur1 joueur2 nb_tentative =
      print_endline (joueur2 ^ ", merci de créer le code secret (ex: Rouge|Vert|Jaune|Violet)");
      print_endline (" Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
-     let methode = 0 in
           let code_secret = read_line () in
-               let Some(code_secret) = Code.code_of_string code_secret in
-               Unix.system "clear";
+               match (Code.code_of_string code_secret) with
+                    | Some(code_secret) -> (
+               clear;
                print_endline (joueur1 ^ ", devinez la combinaison secrète en " ^ (string_of_int nb_tentative) ^ " coups maximum.");
                Unix.sleep 1;
-               joueurjoueRT joueur1 joueur2 nb_tentative code_secret (1,[]);;
+               joueurjoueRT joueur1 joueur2 nb_tentative code_secret (1,[]))
+                    | _ -> joueurjoue joueur1 joueur2 nb_tentative;;
 
 (** Lance le jeu mastermind
   * @param joueur1 nom du joueur1

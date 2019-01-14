@@ -83,7 +83,7 @@ module Naif :
           match (etat) with
                | []           -> acc
                | (0 :: suite) -> verif_etat suite acc
-               | (1 :: suite) -> verif_etat suite (acc+1);;
+               | _ -> verif_etat (List.tl etat) (acc+1);;
 
      let rec verifRT_couleur element n nc etat=
           match (verif_etat etat 0,element) with

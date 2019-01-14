@@ -45,19 +45,26 @@ module IA :
                match (rep) with
                     | Some(4,0) -> [proposition]
                     | Some(n1,n2) when (n1+n2 = 4) -> let res = Naif.supprime_code4 possibles proposition in res
-                    | Some(n1,n2)                  -> let res = Naif.supprime_couleur possibles proposition (n1+n2) in res;;
+                    | Some(n1,n2)                  -> let res = Naif.supprime_couleur possibles proposition (n1+n2) in res
+                    | None -> [];;
 
      let rec filtre_knuthRT courant proposition rep acc =
           match (courant) with
                | [] -> acc
                | _  -> (
                     let test = List.hd courant in
-                         let Some(testbp,testmp) = Code.reponse test proposition in
-                              let Some(propbp,propmp) = rep in
-                                   if ((testbp=propbp)&&(testmp=propmp)) then
-                                        filtre_knuthRT (List.tl courant) proposition rep (acc @ [test])
-                                   else
-                                        filtre_knuthRT (List.tl courant) proposition rep acc
+                         match (Code.reponse test proposition) with
+                              | Some(testbp,testmp) -> (
+                                   match (rep) with
+                                        | Some(propbp,propmp) -> (
+                                             if ((testbp=propbp)&&(testmp=propmp)) then
+                                                  filtre_knuthRT (List.tl courant) proposition rep (acc @ [test])
+                                             else
+                                                  filtre_knuthRT (List.tl courant) proposition rep acc
+                                             )
+                                        | None -> filtre_knuthRT courant proposition rep acc
+                                   )
+                              | None -> filtre_knuthRT courant proposition rep acc
                     );;
 
      let filtre_knuth reponse possibles =
@@ -69,7 +76,7 @@ module IA :
      let filtre methode reponse possibles =
           match methode with
                | 0 -> let res = filtre_naif reponse possibles in res
-               | 1 -> let res = filtre_knuth reponse possibles in res;;
+               | _ -> let res = filtre_knuth reponse possibles in res;;
 
 end ;;
 
