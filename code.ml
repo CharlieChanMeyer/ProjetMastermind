@@ -227,7 +227,7 @@ module Code :
         in let new_l = replace_bien_placeRT code vrai_code []
             in List.rev new_l;;
 
-       (** Prends deux codes en parametres et renvoie le premier code avec des (-1) aux memes positions que celles ou se situent les (-1) dans le second code 
+       (** Prend deux codes en parametres et renvoie le premier code avec des (-1) aux memes positions que celles ou se situent les (-1) dans le second code 
          * @param code le code propose
          * @param vrai_code_modif code secret modifie par la fonction 'replace_bien_place'
          * @return le premier code modifie avec des (-1) a l endroit ou les pions sont bien places
