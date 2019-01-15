@@ -15,7 +15,7 @@ module Mastermindpvp :
      struct
 (** Nettoie le terminal
   *)
-     let clear () = Unix.system "clear"; ();;
+     let clear () = ignore (Unix.system "clear") ;;
 (** Verifie si le nombre de partie est valide
   * @param nb_partie nombre de partie demandé par le joueur
   * @return nombre de partie valide (strictement paire)
@@ -31,7 +31,7 @@ let verif_nb_partie nb_partie =
   *)
 let rec main_prop nb =
      print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : " ^ (Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous))))) ^ ")");
-     print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
+     print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : " ^ (Code.string_of_code (Code.couleurs_possibles)));
      let input_list = read_line () in
           match (Code.code_of_string input_list) with
                | None -> main_prop nb
@@ -137,8 +137,8 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
   * @return le score final
   *)
 let rec joueurjoue joueur1 joueur2 nb_tentative =
-     print_endline (joueur2 ^ ", merci de créer le code secret (ex: Rouge|Vert|Jaune|Violet)");
-     print_endline (" Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
+     print_endline (joueur2 ^ ", merci de créer le code secret (ex: "^(Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous)))))^")");
+     print_endline (" Les couleurs disponibles sont : " ^ (Code.string_of_code (Code.couleurs_possibles)));
           let code_secret = read_line () in
                match (Code.code_of_string code_secret) with
                     | Some(code_secret) -> (

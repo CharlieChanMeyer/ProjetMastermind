@@ -35,7 +35,7 @@ module IA :
                | 0 -> List.nth (possibles) 0
                | _ -> (
                     match (List.length possibles) with
-                         | 1 -> (let [res] = possibles in res)
+                         | 1 -> (List.nth possibles 0)
                          | _ -> (
                               let rep = Code.reponse (List.hd possibles) (List.hd(List.rev essais)) in
                                    let res = Knuth.liste_codes_meme_score_maximum possibles rep in

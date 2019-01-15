@@ -15,7 +15,7 @@ module Mastermind :
      struct
 (** Nettoie le terminal
   *)
-let clear () = Unix.system "clear"; ();;
+let clear () = ignore (Unix.system "clear") ;;
 (** Definie la methode à utiliser
   * @return 0 si la methode voulu est la methode naïve
             1 si la methode voulu est la methode de knuth
@@ -30,13 +30,22 @@ let verif_nb_partie nb_partie =
           (nb_partie)
      else
           (nb_partie+1);;
+
+(** Verifie si l'entrée est un nombre
+  * @param ligne l'entrée utilisateur
+  * @return Some(nombre) si l'entrée est un nombre
+            None si l'entrée utilisateur n'est pas valide
+  *)
+let int_of_string_option ligne =
+     try (Some(int_of_string (ligne))) with |_ -> None;;
+
 (** Demande à l'utilisateur de rentrer une proposition de code
   * @param nb le numéro du tour
   * @return un code sous forme de liste
   *)
 let rec main_prop nb =
-     print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : Rouge|Vert|Bleu|Jaune)");
-     print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
+     print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : " ^ (Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous))))) ^ ")");
+     print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : " ^ (Code.string_of_code (Code.couleurs_possibles)));
      let input_list = read_line () in
           match (Code.code_of_string input_list) with
                | None -> main_prop nb
@@ -49,20 +58,18 @@ let rec main_prop nb =
 let rec prop_res code code_secret =
      print_endline ("Le code proposé par l'ordi est : " ^ (Code.string_of_code code));
      print_endline ("Le code secret est : " ^ (Code.string_of_code code_secret));
-     print_endline ("Merci de rentrer le nombre de pion bien placé puis le nombre de pion mal placé : (ex: 2 -> Entrée -> 2");
-     let input_pbp = int_of_string(read_line()) and input_pmp = int_of_string(read_line()) in
-     try (
-          if (((input_pbp + input_pmp)>=0) && ((input_pbp + input_pmp)<=Code.nombre_pions)) then
-               (input_pbp,input_pmp)
-          else
-               (print_endline ("Au moins l'une des valeurs rentrée n'est pas correcte");
-               prop_res code code_secret)
-          )
-     with
-          | _ -> (
-               print_endline ("Merci de ne rentrer que des nombres !");
-               prop_res code code_secret
+     print_endline ("Merci de rentrer le nombre de pion bien placé puis le nombre de pion mal placé : (ex: 2 -> Entrée -> 2)");
+     let input_pbp = read_line() and input_pmp = read_line() in
+     match (int_of_string_option input_pbp,int_of_string_option input_pmp) with
+          | (Some(pbp),Some(pmp)) -> (
+               if (((pbp + pmp)>=0) && ((pbp + pmp)<=Code.nombre_pions)) then
+                    (pbp,pmp)
+               else
+                    (print_endline ("Au moins l'une des valeurs rentrée n'est pas correcte");
+                    prop_res code code_secret)
                )
+          | (_,_)                 -> (print_endline ("Merci de ne rentrer que des nombres !");print_endline("");prop_res code code_secret)
+
      ;;
 (** Affiche l'état du plateau de jeu
   * @param liste la liste contenant chaque proposition du joueur et son résultat correspondant
@@ -163,7 +170,7 @@ let rec ordijoueautoRT_naif nb_tentative code_secret acc =
                match (Code.reponse proposition code_secret) with
                     | Some(nbp,nmp) -> (
                          if (nbp = 4) then
-                              (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                              (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ " tentatives, vous avez perdu.");
                               let res = 0 in res)
                          else
                               (let liste = liste @ [proposition] in
@@ -204,7 +211,7 @@ let rec ordijoueRT_naif nb_tentative code_secret acc =
                          let (res1,res2) = prop_res proposition code_secret in
                               if (res1 = nbp) && (res2 = nmp) then
                                    (if (nbp = 4) then
-                                        (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                                        (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ " tentatives, vous avez perdu.");
                                         let res = 0 in res)
                                    else
                                         (let liste = liste @ [proposition] in
@@ -241,7 +248,7 @@ let rec ordijoueautoRT_knuth nb_tentative code_secret acc =
                match (Code.reponse proposition code_secret) with
                     | Some(nbp,nmp) -> (
                          if (nbp = 4) then
-                              (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                              (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ " tentatives, vous avez perdu.");
                               let res = 0 in res)
                          else
                               (let liste = liste @ [proposition] in
@@ -282,7 +289,7 @@ let rec ordijoueRT_knuth nb_tentative code_secret acc =
                          let (res1,res2) = prop_res proposition code_secret in
                               if (res1 = nbp) && (res2 = nmp) then
                                    (if (nbp = 4) then
-                                        (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ ", vous avez perdu.");
+                                        (print_endline ("L'ordinateur a trouvé le code secret en " ^ (string_of_int nb) ^ " tentatives, vous avez perdu.");
                                         let res = 0 in res)
                                    else
                                         (let liste = liste @ [proposition] in
@@ -301,8 +308,8 @@ let rec ordijoueRT_knuth nb_tentative code_secret acc =
   * @return le score final
   *)
 let rec ordijoue joueur nb_tentative auto =
-     print_endline (joueur ^ ", merci de créer le code secret (ex: Rouge|Vert|Jaune|Violet)");
-     print_endline (" Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
+     print_endline (joueur ^ ", merci de créer le code secret (ex: "^(Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous)))))^")");
+     print_endline (" Les couleurs disponibles sont : " ^ (Code.string_of_code (Code.couleurs_possibles)));
      let methode = choix_methode in
           let code_secret = read_line () in
                match (Code.code_of_string code_secret) with

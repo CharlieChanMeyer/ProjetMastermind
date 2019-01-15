@@ -115,7 +115,7 @@ module Knuth (*:
                 | ([],[])                                         -> true
                 | (t :: tsuite,m :: msuite) when (t > m)          -> false
                 | (t :: tsuite,m :: msuite) when (m > t)          -> true
-                | (_,_) when ((List.hd test) = (List.hd minimum)) -> verif (List.tl test) (List.tl minimum)
+                | (_,_)                                           -> verif (List.tl test) (List.tl minimum)
 
       let rec mini possibles acc =
            match (possibles) with

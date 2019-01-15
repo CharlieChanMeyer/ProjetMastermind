@@ -146,7 +146,7 @@ module Code :
           match vrai_code with
             |[]->acc
             |h :: t when h=element -> nb_fois_presentAcc element t (acc+1)
-            |h :: t when h<>element -> nb_fois_presentAcc element t acc
+            |h :: t                -> nb_fois_presentAcc element t acc
 
         in nb_fois_presentAcc element vrai_code 0;;
 
@@ -211,9 +211,9 @@ module Code :
         let rec reponseMalPlaceAcc code_modif vrai_code_modif acc pos =
           match code_modif with
           | [] -> acc
-          | h :: t when h=(List.nth vrai_code_modif pos) -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) acc (pos+1)
+          | h :: t when h=(List.nth vrai_code_modif pos)       -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) acc (pos+1)
           | h :: t when (nb_fois_present h vrai_code_modif)<>0 -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) (pos_premier_elem_rencontre vrai_code_modif h)) (acc+1) (pos+1)
-          | h :: t when (nb_fois_present h vrai_code_modif)=0 -> reponseMalPlaceAcc t vrai_code_modif acc (pos+1)
+          | h :: t                                             -> reponseMalPlaceAcc t vrai_code_modif acc (pos+1)
 
         in reponseMalPlaceAcc code_modif vrai_code_modif 0 0;;
 
