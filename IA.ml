@@ -44,10 +44,10 @@ module IA :
 
 
      let filtre_naif reponse possibles =
-          let proposition = fst(reponse) and rep = snd(reponse) in
+          let proposition = fst(reponse) and rep = snd(reponse) and pions = Code.nombre_pions in
                match (rep) with
-                    | Some(4,0) -> [proposition]
-                    | Some(n1,n2) when (n1+n2 = 4) -> let res = Naif.supprime_code4 possibles proposition in res
+                    | Some(pions,0) -> [proposition]
+                    | Some(n1,n2) when (n1+n2 = pions) -> let res = Naif.supprime_code4 possibles proposition in res
                     | Some(n1,n2)                  -> let res = Naif.supprime_couleur possibles proposition (n1+n2) in res
                     | None -> [];;
 

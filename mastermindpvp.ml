@@ -30,7 +30,7 @@ let verif_nb_partie nb_partie =
   * @return un code sous forme de liste
   *)
 let rec main_prop nb =
-     print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : Rouge|Vert|Bleu|Jaune)");
+     print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : " ^ (Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous))))) ^ ")");
      print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : Rouge / Vert / Bleu / Jaune / Violet / Blanc");
      let input_list = read_line () in
           match (Code.code_of_string input_list) with

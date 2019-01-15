@@ -52,7 +52,7 @@ module Code :
        *)
      val reponse : t -> t -> (int * int) option
 
-     end = 
+     end =
      struct
 
      type pion = int;;
@@ -82,11 +82,14 @@ module Code :
           |4->"Jaune"
           |5->"Violet"
           |6->"Blanc"
+          |7->"Orange"
+          |8->"Rose"
+          |9->"Marron"
           |_->"pas une couleur";;
 
 
 
-     let string_of_code liste_pion = List.fold_left (fun acc elem -> acc^(int2color elem)^" | ") " | " liste_pion;;
+     let string_of_code liste_pion = List.fold_left (fun acc elem -> acc^(int2color elem)^"|") "" liste_pion;;
 
      (** Ligne de commande a rentrer avant cette fonction pour qu elle fonctionne :   #load "str.cma";; *)
      let split_code str = Str.split (Str.regexp "|") str;;
@@ -100,6 +103,9 @@ module Code :
             |"Jaune"->4
             |"Violet"->5
             |"Blanc"->6
+            |"Orange"->7
+            |"Rose"->8
+            |"Marron"->9
             |_->(-1);;
 
 
@@ -149,7 +155,7 @@ module Code :
           match code with
           | [] -> acc
           | h :: t when h=(List.hd vrai_code) -> reponseBienPlaceAcc t (List.tl vrai_code) (acc+1)
-          | h :: t -> reponseBienPlaceAcc t (List.tl vrai_code) acc 
+          | h :: t -> reponseBienPlaceAcc t (List.tl vrai_code) acc
 
       in reponseBienPlaceAcc code vrai_code 0;;
 
@@ -158,22 +164,22 @@ module Code :
         let rec replace_nthAcc l elem pos acc acc_liste =
           match l with
           | [] -> acc_liste
-          | h :: t when acc=pos -> replace_nthAcc t elem pos (acc+1) acc_liste@[elem] 
+          | h :: t when acc=pos -> replace_nthAcc t elem pos (acc+1) acc_liste@[elem]
           | h :: t -> replace_nthAcc t elem pos (acc+1) (acc_liste)@[h]
 
-        in let new_l= replace_nthAcc l elem pos 0 [] in 
+        in let new_l= replace_nthAcc l elem pos 0 [] in
               List.rev new_l;;
 
 
 
-(* Prend le code choisi et le code a trouver en parametres, s il y a des pions bien places : 
+(* Prend le code choisi et le code a trouver en parametres, s il y a des pions bien places :
   remplace dans les positions correspondantes par des (-1) dans le vrai_code *)
-      let replace_bien_place code vrai_code = 
+      let replace_bien_place code vrai_code =
         let rec replace_bien_placeRT code vrai_code acc =
           match code with
           | [] -> acc
           | h :: t when h = (List.hd vrai_code) -> replace_bien_placeRT t (List.tl vrai_code) acc@[(-1)]
-          | h :: t ->replace_bien_placeRT t (List.tl vrai_code) acc@[List.hd vrai_code] 
+          | h :: t ->replace_bien_placeRT t (List.tl vrai_code) acc@[List.hd vrai_code]
 
         in let new_l = replace_bien_placeRT code vrai_code []
             in List.rev new_l;;
@@ -205,16 +211,16 @@ module Code :
         let rec reponseMalPlaceAcc code_modif vrai_code_modif acc pos =
           match code_modif with
           | [] -> acc
-          | h :: t when h=(List.nth vrai_code_modif pos) -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) acc (pos+1) 
-          | h :: t when (nb_fois_present h vrai_code_modif)<>0 -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) (pos_premier_elem_rencontre vrai_code_modif h)) (acc+1) (pos+1) 
-          | h :: t when (nb_fois_present h vrai_code_modif)=0 -> reponseMalPlaceAcc t vrai_code_modif acc (pos+1) 
+          | h :: t when h=(List.nth vrai_code_modif pos) -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) pos) acc (pos+1)
+          | h :: t when (nb_fois_present h vrai_code_modif)<>0 -> reponseMalPlaceAcc t (replace_nth vrai_code_modif (-1) (pos_premier_elem_rencontre vrai_code_modif h)) (acc+1) (pos+1)
+          | h :: t when (nb_fois_present h vrai_code_modif)=0 -> reponseMalPlaceAcc t vrai_code_modif acc (pos+1)
 
-        in reponseMalPlaceAcc code_modif vrai_code_modif 0 0;; 
+        in reponseMalPlaceAcc code_modif vrai_code_modif 0 0;;
 
 
       let existence_valeur_negative code = List.exists (fun x -> x<0) code;;
 
-     let reponse code vrai_code = 
+     let reponse code vrai_code =
         match code with
         | l when List.length l <> List.length vrai_code -> None
         | l when existence_valeur_negative l -> None
