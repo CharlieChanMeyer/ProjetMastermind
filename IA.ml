@@ -31,20 +31,20 @@ module IA :
      let nombre_methodes = 2;;
 
      let choix methode essais possibles =
-          match (methode) with               (*Vérifie la méthode choisis*)
-               | 0 -> List.nth (possibles) 0      (*Si méthode naïve, retourne le première élément de la liste*)
+          match (methode) with               (*Vérifie la méthode choisie*)
+               | 0 -> List.nth (possibles) 0      (*Si méthode naïve, retourne le premier élément de la liste*)
                | _ -> (
                     match (List.length possibles) with      (*Sinon, vérifie la taille de la liste des éléments courants*)
                          | 1 -> (List.nth possibles 0)      (*Si la taille est égale à 1, alors retourne le seul élément présent*)
                          | _ -> (
                               let rep = Code.reponse (List.hd possibles) (List.hd(List.rev essais)) in   (*Sinon, calcule la réponse obtenue entre le premier élement de la liste et le dernier élement proposé*)
-                                   let res = Knuth.liste_codes_meme_score_maximum possibles rep in  (*Calcule la liste des élements enlevant le plus de code possibles*)
+                                   let res = Knuth.liste_codes_meme_score_maximum possibles rep in  (*Calcule la liste des élements enlevant le plus de codes possibles*)
                                         Knuth.mini (List.tl res) (List.hd res)) (*Retourne le code le plus petit possible*)
                     );;
 
 
      let filtre_naif reponse possibles =
-          let proposition = fst(reponse) and rep = snd(reponse) and pions = Code.nombre_pions in    (*Définis les variables temporaires de la fonctions*)
+          let proposition = fst(reponse) and rep = snd(reponse) and pions = Code.nombre_pions in    (*Définit les variables temporaires de la fonction*)
                match (rep) with
                     | Some(pions,0) -> [proposition] (*Si la réponse précedente est Some(4,0), alors retourne la proposition*)
                     | Some(n1,n2) when (n1+n2 = pions) -> let res = Naif.supprime_code4 possibles proposition in res  (*Si la réponse précedente est ~pions, alors filtre selon supprime_code4*)
@@ -55,7 +55,7 @@ module IA :
           match (courant) with
                | [] -> acc         (*Si la liste des courants est vide, retourne l'accumulateur*)
                | _  -> (
-                    let test = List.hd courant in                (*Prends en variable la tête de la liste*)
+                    let test = List.hd courant in                (*Prend en variable la tête de la liste*)
                          match (Code.reponse test proposition) with  (*Match la réponse obtenue entre la tête et la dernière proposition*)
                               | Some(testbp,testmp) -> (
                                    match (rep) with
@@ -71,7 +71,7 @@ module IA :
                     );;
 
      let filtre_knuth reponse possibles =
-          let proposition = fst(reponse) and rep = snd(reponse) in (*Définie des variables temporaires*)
+          let proposition = fst(reponse) and rep = snd(reponse) in (*Définit des variables temporaires*)
                let res = filtre_knuthRT possibles proposition rep [] in (*Filtre selon la methode de KNUTH*)
                     let res = supprime_element res proposition in          (*Supprime l'élement proposé lors de la dernière tentative de la liste des courants*)
                          res;;          (*Retourne le résultat*)
@@ -90,12 +90,12 @@ end ;;
   *)
 let methode_naif tour courant reponse =
      if tour = 1 then         (*Si le tour de jeu est 1*)
-          let proposition = IA.choix 0 [] courant in        (*Choisis un code à proposé*)
+          let proposition = IA.choix 0 [] courant in        (*Choisit un code à proposer*)
                let courant = supprime_element (Code.tous) proposition in (*Enlève l'élement à proposer de la liste des codes courants*)
                     (proposition,courant) (*Retourne un couple proposition,courant*)
      else
           let courant = IA.filtre 0 reponse courant in           (*Sinon, filtre la liste des courants en fonction de la réponse obtenue au dernier tour*)
-               let proposition = IA.choix 0 [] courant in (*Choisis un code à proposer parmis la nouvelle liste courante*)
+               let proposition = IA.choix 0 [] courant in (*Choisit un code à proposer parmi la nouvelle liste courante*)
                     (proposition,courant)    (*Retourne un couple proposition,courant*)
 (** Joue un tour selon la méthode naïve
   * @param tour le numéro du tour
@@ -110,5 +110,5 @@ let methode_knuth tour courant reponse  =
                 (proposition,courant)   (*Retourne un couple proposition,courant*)
      else
           let courant = IA.filtre 1 reponse courant in (*Sinon, filtre la liste des courants en fonction de la réponse obtenue au dernier tour*)
-               let proposition = IA.choix 1 [fst(reponse)] courant in (*Choisis un code à proposé*)
+               let proposition = IA.choix 1 [fst(reponse)] courant in (*Choisit un code à proposer*)
                     (proposition,courant)    (*Retourne un couple proposition,courant*)
