@@ -159,7 +159,7 @@ module Knuth (*:
                 | ([],[])                                         -> true
                 | (t :: tsuite,m :: msuite) when (t > m)          -> false
                 | (t :: tsuite,m :: msuite) when (m > t)          -> true
-                | (_,_) when ((List.hd test) = (List.hd minimum)) -> verif (List.tl test) (List.tl minimum)
+                | (_,_)                                           -> verif (List.tl test) (List.tl minimum)
 
       (** Calcule le plus petit code d'une liste de codes
         * @param possibles une liste de listes d entiers (une liste de codes)
