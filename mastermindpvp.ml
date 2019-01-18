@@ -59,9 +59,9 @@ let rec prop_res joueur1 code code_secret =
                     (pbp,pmp)
                else                                                             (*Sinon, redemande à l'utilisateur de rentrer des valeurs valides*)
                     (print_endline ("Au moins l'une des valeurs rentrée n'est pas correcte");
-                    prop_res code code_secret)
+                    prop_res joueur1 code code_secret)
                )
-          | (_,_)                 -> (print_endline ("Merci de ne rentrer que des nombres !");print_endline("");prop_res code code_secret)
+          | (_,_)                 -> (print_endline ("Merci de ne rentrer que des nombres !");print_endline("");prop_res joueur1 code code_secret)
     ;;
 (** Affiche l'état du plateau de jeu
   * @param liste la liste contenant chaque proposition du joueur et son résultat correspondant
@@ -86,7 +86,7 @@ let rec afficher_plateau liste acc=
   *)
 let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
      match (acc) with                                                   (*Vérifie le numéro du tour de la partie*)
-          | (nb,_) when (nb = nb_tentative) -> (                        (*Si c'est le dernier tour de la partie*)
+          | (nb,liste) when (nb = nb_tentative) -> (                        (*Si c'est le dernier tour de la partie*)
                clear ();
                print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
