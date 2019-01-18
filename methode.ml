@@ -24,7 +24,7 @@ module Naif :
      (** Supprime des elements de la liste en accord avec la reponse obtenue
        * @param liste liste des codes courants
        * @param element element de la liste courante dont au moins un pion est "valide"
-       * @param nc le nombre de pions bien et mal placé lors de la dernier proposition
+       * @param nc le nombre de pions biens et mal placés lors de la dernière proposition
        * @return la liste sans les elements à supprimer
        *)
      val supprime_couleur : Code.t list -> Code.t -> int -> Code.t list
@@ -38,12 +38,12 @@ module Naif :
 
      end=
      struct
-     (** Modifie la liste rentré en paramètre
+     (** Modifie la liste rentrée en paramètre
        * @param liste liste d'état de la vérification du code
        * @param nth numéro de la position à modifier
        * @param acc position actuelle de la fonction dans la liste à modifier
        * @param res accumulateur contenant la nouvelle liste
-       * @return la liste avec un 1 supplémentaire à la position demandé
+       * @return la liste avec un 1 supplémentaire à la position demandée
        *)
      let rec modifie liste nth acc res=
           match (liste) with
@@ -52,14 +52,14 @@ module Naif :
                | (n :: suite) when (acc = nth) -> modifie suite nth (acc+1) (res @ [1])             (*Si la position actuelle de la fonction est la position à modifier, relance la fonction sur la suite de la liste en ajoutant un 1*)
                | (n :: suite)                  -> modifie suite nth (acc+1) (res @ [0]);;           (*Sinon, relance la fonction sur la liste de la suite en laissant le 0*)
 
-     (** Crée une liste de zero
-       * @param acc la "taille" actuelle de la liste de zero en cours de création
-       * @param liste la liste de zero en cours de création
-       * @return la liste de zero créer
+     (** Crée une liste de zeros
+       * @param acc la "taille" actuelle de la liste de zeros en cours de création
+       * @param liste la liste de zeros en cours de création
+       * @return la liste de zeros créées
        *)
      let rec creer_liste_0 acc liste=
           if (acc=Code.nombre_pions) then
-               liste               (*Si la liste a la taille souhaité, retourne la liste*)
+               liste               (*Si la liste a la taille souhaitée, retourne la liste*)
           else
                creer_liste_0 (acc+1) (liste @ [0]);;        (*Sinon, relance la fonction en ajoutant 1 à sa taille et un nouveau 0 à la liste*)
      (** Vérifie si l'élément actuel de la dernière proposition est contenu dans la liste en cours de vérification
@@ -72,7 +72,7 @@ module Naif :
      let rec verif2RT mp n etat acc =
           match (n) with
                | [] -> (false,etat)          (*Si on arrive à la fin de la liste sans avoir trouvé de correspondance, retourne faux*)
-               | (np :: suite) -> (if ((mp=np)&& (List.nth etat acc)=0) then    (*S'il y a correspondance et que la position n'a pas déjà été vérifié*)
+               | (np :: suite) -> (if ((mp=np)&& (List.nth etat acc)=0) then    (*S'il y a correspondance et que la position n'a pas déjà été vérifiée*)
                                         let etat = modifie etat acc 0 [] in     (*Modifie l'état puis retourne le couple réponse*)
                                              (true,etat)
                                    else
@@ -80,7 +80,7 @@ module Naif :
      (** Vérifie chaque élément de la dernière proposition dans le code actuellement en cours de vérification
        * @param élément code de la dernière proposition
        * @param n code actuellement en cours de vérification
-       * @param etat liste contant l'état actuel de la vérification
+       * @param etat liste contenant l'état actuel de la vérification
        * @return true si le code vérifié vérifie les conditions
                  false sinon
        *)
@@ -108,7 +108,7 @@ module Naif :
        *)
      let rec verif_etat etat acc =
           match (etat) with
-               | []           -> acc         (*Une fois toute la liste d'état parcouru, retourne l'accumulateur*)
+               | []           -> acc         (*Une fois toute la liste d'état parcourue, retourne l'accumulateur*)
                | (0 :: suite) -> verif_etat suite acc       (*Si l'élément actuel de la liste d'état est un 0, relance la fonction sur la suite de l'état*)
                | _ -> verif_etat (List.tl etat) (acc+1);;   (*Sinon, relance la fonction sur la suite de la liste d'état en ajoutant 1 à l'accumulateur*)
      (** Vérifie chaque élément de la dernière proposition dans le code actuellement en cours de vérification
