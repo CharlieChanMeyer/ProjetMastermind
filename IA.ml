@@ -82,7 +82,12 @@ module IA :
                | _ -> let res = filtre_knuth reponse possibles in res;;
 
 end ;;
-
+(** Joue un tour selon la méthode naïve
+  * @param tour le numéro du tour
+  * @param courant la liste courante de codes possibles
+  * @param  reponse un couple contenant la dernière proposition ainsi que la réponse associée
+  * @return un couple contenant la nouvelle proposition ainsi que la nouvelle liste courante
+  *)
 let methode_naif tour courant reponse =
      if tour = 1 then         (*Si le tour de jeu est 1*)
           let proposition = IA.choix 0 [] courant in        (*Choisis un code à proposé*)
@@ -92,7 +97,12 @@ let methode_naif tour courant reponse =
           let courant = IA.filtre 0 reponse courant in           (*Sinon, filtre la liste des courants en fonction de la réponse obtenue au dernier tour*)
                let proposition = IA.choix 0 [] courant in (*Choisis un code à proposer parmis la nouvelle liste courante*)
                     (proposition,courant)    (*Retourne un couple proposition,courant*)
-
+(** Joue un tour selon la méthode naïve
+  * @param tour le numéro du tour
+  * @param courant la liste courante de codes possibles
+  * @param  reponse un couple contenant la dernière proposition ainsi que la réponse associée
+  * @return un couple contenant la nouvelle proposition ainsi que la nouvelle liste courante
+  *)
 let methode_knuth tour courant reponse  =
      if tour = 1 then          (*Si le tour de jeu est 1*)
           let proposition = [1;1;2;2] in               (*Propose le code [1;1;2;2] selon la méthode de KNUTH*)
