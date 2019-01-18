@@ -5,9 +5,9 @@ module Mastermindpvp :
      sig
      (** Lance le jeu mastermind
        * @param joueur nom du joueur
-       * @param nb_tentative le nombre maximale de tentative par partie
+       * @param nb_tentative le nombre maximal de tentatives par partie
        * @param nb_partie le nombre de parties à jouer
-       * @param auto verifie si les reponses sont calculer automatiquement
+       * @param auto verifie si les reponses sont calculées automatiquement
        * @return le score final
        *)
      val mastermindpvp : string -> string -> int -> int -> unit
@@ -16,9 +16,9 @@ module Mastermindpvp :
 (** Nettoie le terminal
   *)
      let clear () = ignore (Unix.system "clear") ;;
-(** Verifie si le nombre de partie est valide
-  * @param nb_partie nombre de partie demandé par le joueur
-  * @return nombre de partie valide (strictement paire)
+(** Verifie si le nombre de parties est valide
+  * @param nb_partie nombre de parties demandé par le joueur
+  * @return nombre de parties valides (strictement paire)
   *)
 let verif_nb_partie nb_partie =
      if ((nb_partie mod 2)=0) then
@@ -40,18 +40,18 @@ let rec main_prop nb =
      print_endline((string_of_int (nb)) ^ " Tapez une proposition : (ex : " ^ (Code.string_of_code (List.nth (Code.tous) (Random.int (List.length (Code.tous))))) ^ ")"); (*Affiche les consignes*)
      print_endline ((string_of_int (nb)) ^ " Les couleurs disponibles sont : " ^ (Code.string_of_code (Code.couleurs_possibles)));
      let input_list = read_line () in (*Demande à l'utilisateur de rentrer un code*)
-          match (Code.code_of_string input_list) with (*Vérifie le code rentrée par l'utilisateur*)
+          match (Code.code_of_string input_list) with (*Vérifie le code rentré par l'utilisateur*)
                | None -> (print_endline("");print_endline("Le code proposé n'est pas valide");print_endline("");main_prop nb) (*L'entrée utilisateur n'étant pas correcte, on lui demande d'en rerentrer une valide*)
                | Some(liste) -> liste;; (*Retourne le code valide proposé par l'utilisateur*)
 (** Demande à l'utilisateur de verifier une proposition de code
   * @param code le code proposé par l'ordinateur
-  * @param code_secret le code secret choisis par le joueur en début de partie
+  * @param code_secret le code secret choisi par le joueur en début de partie
   * @return un couple designant le nombre de pions bien placés et le nombre de pions mal placés
   *)
 let rec prop_res joueur1 code code_secret =
      print_endline ("Le code proposé par " ^ joueur1 ^ " est : " ^ (Code.string_of_code code));         (*Affiche les consignes*)
      print_endline ("Le code secret est : " ^ (Code.string_of_code code_secret));
-     print_endline ("Merci de rentrer le nombre de pion bien placé puis le nombre de pion mal placé : (ex: 2 -> Entrée -> 2)");
+     print_endline ("Merci de rentrer le nombre de pions bien placés puis le nombre de pions mal placés : (ex: 2 -> Entrée -> 2)");
      let input_pbp = int_of_string(read_line()) and input_pmp = int_of_string(read_line()) in           (*Récupère les valeurs entrées par l'utilisateur*)
       match (int_of_string_option input_pbp,int_of_string_option input_pmp) with (*Vérifie les valeurs entrées par l'utilisateur*)
           | (Some(pbp),Some(pmp)) -> (
@@ -78,15 +78,15 @@ let rec afficher_plateau liste acc=
                     print_endline((string_of_int nbp) ^ " pions sont bien placés ; " ^ (string_of_int nmp) ^ " pions sont mal placés");
                     afficher_plateau suite (acc+1)
                );;
-(** Verifie si le nombre de partie est valide
-  * @param nb_tentative le nombre maximale de tentative par partie
-  * @param code_secret le code secret choisis aléatoirement par l'ordinateur
-  * @parem acc un accumulateur contenant le numéro du tour et une liste contenant elle-même chaque proposition déjà effectué ainsi que leur réponse associée.
-  * @return le scole finale
+(** Verifie si le nombre de parties est valide
+  * @param nb_tentative le nombre maximal de tentatives par partie
+  * @param code_secret le code secret choisi aléatoirement par l'ordinateur
+  * @parem acc un accumulateur contenant le numéro du tour et une liste contenant elle-même chaque proposition déjà effectuée ainsi que leur réponse associée.
+  * @return le scole final
   *)
 let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
      match (acc) with                                                   (*Vérifie le numéro du tour de la partie*)
-          | (nb,_) when (nb = nb_tentative) -> (                        (*Si c'est le dernier tours de la partie*)
+          | (nb,_) when (nb = nb_tentative) -> (                        (*Si c'est le dernier tour de la partie*)
                clear ();
                print_endline (joueur1 ^ ", à vous de jouer !");         
                Unix.sleep 1;
@@ -99,7 +99,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in      (*Récupère la réponse du joueur2*)
                               if ((res1 = nbp) && (res2 = nmp)) then      (*Si le joueur2 n'a pas triché*)          
-                                   (if (nbp = 4) then                   (*Si le code est bon, dis au joueur qu'il a gagné, et retourne le score final de la partie*)
+                                   (if (nbp = 4) then                   (*Si le code est bon, dit au joueur qu'il a gagné, et retourne le score final de la partie*)
                                         (print_endline (joueur1 ^" a trouvé le code secret, " ^ joueur2 ^ " a perdu.");
                                         let res = 1 in res)
                                    else                                  (*Sinon, le code est faux, et le joueur perd*)
@@ -124,13 +124,13 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in      (*Récupère la réponse du joueur2*)
                               if (res1 = nbp) && (res2 = nmp) then               (*Si le joueur2 n'a pas triché*)         
-                                   (if (nbp = 4) then                           (*Si le code est bon, dis au joueur qu'il a gagné, et retourne le score final de la partie*)
+                                   (if (nbp = 4) then                           (*Si le code est bon, dit au joueur qu'il a gagné, et retourne le score final de la partie*)
                                         (print_endline (joueur1 ^" a trouvé le code secret, " ^ joueur2 ^ " a perdu.");
                                         let res = 1 in res)
                                    else
                                         let liste = liste @ [(proposition,(nbp,nmp))] in            (*Ajoute à la variable liste le tour qui vient de passer*)
                                              joueurjoueRT joueur1 joueur2 nb_tentative code_secret (nb+1,liste))        (*Lance le tour suivant*)
-                              else                  (*Si le joueur2 a triché, il pert et retourne le score final de la partie*)
+                              else                  (*Si le joueur2 a triché, il perd et retourne le score final de la partie*)
                                    (print_endline (joueur1 ^" a gagné car " ^ joueur2 ^ " a triché.");
                                    let res = 1 in res))
                     | _ -> joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc
@@ -138,7 +138,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
 
 (** Lance une partie où le joueur doit créer le code
   * @param joueur le nom du joueur
-  * @param nb_tentative le nombre maximale de tentative par partie
+  * @param nb_tentative le nombre maximal de tentatives par partie
   * @return le score final
   *)
 let rec joueurjoue joueur1 joueur2 nb_tentative =
@@ -151,25 +151,25 @@ let rec joueurjoue joueur1 joueur2 nb_tentative =
                print_endline (joueur1 ^ ", devinez la combinaison secrète en " ^ (string_of_int nb_tentative) ^ " coups maximum.");
                Unix.sleep 1;
                joueurjoueRT joueur1 joueur2 nb_tentative code_secret (1,[]))
-                    | _ -> joueurjoue joueur1 joueur2 nb_tentative;;        (*Sinon redemannde un code secret valide au joueur*)
+                    | _ -> joueurjoue joueur1 joueur2 nb_tentative;;        (*Sinon redemande un code secret valide au joueur*)
 
 (** Lance le jeu mastermind
   * @param joueur1 nom du joueur1
   * @param joueur2 nom du joueur2
-  * @param nb_tentative le nombre maximale de tentative par partie
+  * @param nb_tentative le nombre maximal de tentatives par partie
   * @param nb_partie le nombre de parties à jouer
-  * @param acc_partie le nombre de partie déjà joué
+  * @param acc_partie le nombre de parties déjà jouées
   * @param acc_score le score des différentes parties
   * @return le score final
   *)
 let rec mastermindpvpRT joueur1 joueur2 nb_tentative nb_partie acc_partie acc_score=
      let (score_j1,score_j2) = acc_score in
      match (acc_partie) with
-          | (nb,_) when (nb=nb_partie+1) -> (                       (*Lorsque toutes les parties ont été jouée,...*)
+          | (nb,_) when (nb=nb_partie+1) -> (                       (*Lorsque toutes les parties ont été jouées,...*)
                if (score_j1>score_j2) then                          (*Si le joueur1 a gagné, lui indique et termine le programme*)
                     (print_endline ("Bravo, " ^ joueur1 ^ ", vous avez gagné plus de partie que " ^ joueur2 ^ " !"))
                else
-                    (if (score_j1=score_j2) then                    (*Si il y a égalité, l'ordinateur l'indique et termine le programme*)
+                    (if (score_j1=score_j2) then                    (*S'il y a égalité, l'ordinateur l'indique et termine le programme*)
                          (print_endline ("Vous avez gagné autant de partie. Egalité !"))
                     else                                            (*Si le joueur2 a gagné, lui indique et termine le programme*)
                          (print_endline ("Bravo, " ^ joueur2 ^ ", vous avez gagné plus de partie que " ^ joueur1 ^ " !"))
@@ -191,7 +191,7 @@ let rec mastermindpvpRT joueur1 joueur2 nb_tentative nb_partie acc_partie acc_sc
 
 let mastermindpvp joueur1 joueur2 nb_tentative nb_partie =
      let nb_partie = verif_nb_partie nb_partie in       (*Vérifie le nombre de partie*)
-          let debut = Random.bool() in                  (*Définie de manière aléatoire qui commencera*)
+          let debut = Random.bool() in                  (*Définit de manière aléatoire qui commencera*)
                mastermindpvpRT joueur1 joueur2 nb_tentative nb_partie (1,debut) (0,0);;         (*Lance la première partie du jeu*)
 
 end;;
