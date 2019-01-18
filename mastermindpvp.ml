@@ -52,7 +52,7 @@ let rec prop_res joueur1 code code_secret =
      print_endline ("Le code proposé par " ^ joueur1 ^ " est : " ^ (Code.string_of_code code));         (*Affiche les consignes*)
      print_endline ("Le code secret est : " ^ (Code.string_of_code code_secret));
      print_endline ("Merci de rentrer le nombre de pions bien placés puis le nombre de pions mal placés : (ex: 2 -> Entrée -> 2)");
-     let input_pbp = int_of_string(read_line()) and input_pmp = int_of_string(read_line()) in           (*Récupère les valeurs entrées par l'utilisateur*)
+     let input_pbp = read_line() and input_pmp = read_line() in           (*Récupère les valeurs entrées par l'utilisateur*)
       match (int_of_string_option input_pbp,int_of_string_option input_pmp) with (*Vérifie les valeurs entrées par l'utilisateur*)
           | (Some(pbp),Some(pmp)) -> (
                if (((pbp + pmp)>=0) && ((pbp + pmp)<=Code.nombre_pions)) then   (*Si les valeurs sont correctes,retourne le couple de valeur*)
@@ -88,7 +88,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
      match (acc) with                                                   (*Vérifie le numéro du tour de la partie*)
           | (nb,_) when (nb = nb_tentative) -> (                        (*Si c'est le dernier tour de la partie*)
                clear ();
-               print_endline (joueur1 ^ ", à vous de jouer !");         
+               print_endline (joueur1 ^ ", à vous de jouer !");
                Unix.sleep 1;
                afficher_plateau liste 1;                                (*Affiche le plateau de jeu*)
                let proposition = main_prop nb in                        (*Demande au joueur1 de rentrer une proposition*)
@@ -98,7 +98,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in      (*Récupère la réponse du joueur2*)
-                              if ((res1 = nbp) && (res2 = nmp)) then      (*Si le joueur2 n'a pas triché*)          
+                              if ((res1 = nbp) && (res2 = nmp)) then      (*Si le joueur2 n'a pas triché*)
                                    (if (nbp = 4) then                   (*Si le code est bon, dit au joueur qu'il a gagné, et retourne le score final de la partie*)
                                         (print_endline (joueur1 ^" a trouvé le code secret, " ^ joueur2 ^ " a perdu.");
                                         let res = 1 in res)
@@ -123,7 +123,7 @@ let rec joueurjoueRT joueur1 joueur2 nb_tentative code_secret acc =
                          print_endline (joueur2 ^ ", à vous de jouer !");
                          Unix.sleep 3;
                          let (res1,res2) = prop_res joueur1 proposition code_secret in      (*Récupère la réponse du joueur2*)
-                              if (res1 = nbp) && (res2 = nmp) then               (*Si le joueur2 n'a pas triché*)         
+                              if (res1 = nbp) && (res2 = nmp) then               (*Si le joueur2 n'a pas triché*)
                                    (if (nbp = 4) then                           (*Si le code est bon, dit au joueur qu'il a gagné, et retourne le score final de la partie*)
                                         (print_endline (joueur1 ^" a trouvé le code secret, " ^ joueur2 ^ " a perdu.");
                                         let res = 1 in res)
