@@ -110,13 +110,23 @@ module Knuth (*:
       end*)=
       struct
 
+      (** Verifie si la valeur du premier parametre est plus petite que celle du second  
+        * @param test une liste d entiers (un code) 
+        * @param minimum une liste d entiers (un code)
+        * @return un booleen : true si test est plus petit que minimum, false sinon
+        *)
       let rec verif test minimum =
            match (test,minimum) with
                 | ([],[])                                         -> true
                 | (t :: tsuite,m :: msuite) when (t > m)          -> false
                 | (t :: tsuite,m :: msuite) when (m > t)          -> true
-                | (_,_)                                           -> verif (List.tl test) (List.tl minimum)
+                | (_,_) when ((List.hd test) = (List.hd minimum)) -> verif (List.tl test) (List.tl minimum)
 
+      (** Calcule le plus petit code d'une liste de codes 
+        * @param possibles une liste de listes d entiers (une liste de codes)
+        * @param acc une liste d entiers (un code)
+        * @return une liste d entiers (un code)  
+        *)
       let rec mini possibles acc =
            match (possibles) with
                 | [] -> acc
@@ -127,7 +137,10 @@ module Knuth (*:
                           else
                                mini suite acc
                      );;
-
+    (** Calcule le maximum d une liste d entiers
+      * @param liste une liste d entiers
+      * @return un entier qui est la plus grande valeur contenue dans cette liste d entiers 
+      *)
      let max_liste liste =
           let rec max_listeRT liste acc =
                match liste with
@@ -137,6 +150,12 @@ module Knuth (*:
 
           in max_listeRT liste 0 ;;
 
+     (** Calcule score d un code par rapport a une liste de codes selon la reponse c est a dire le nombre de codes que le code rentre en second parametre peut eliminer de la liste de codes pour reduire la taille de la liste pour la prochaine tentative
+       * @param liste_codes une liste de listes d entiers 
+       * @param code le code propose : une liste d entiers
+       * @param couple_reponse le couple de pions (BienPlaces, MalPlaces) 
+       * @return le score du code
+       *)
      let calcule_score liste_codes code couple_reponse =
           let rec calcule_scoreRT liste_codes code couple_reponse acc =
                match liste_codes with
@@ -146,6 +165,11 @@ module Knuth (*:
 
           in calcule_scoreRT liste_codes code couple_reponse 0 ;;
 
+    (** Calcule la liste contenant le score de chaque code appartenant a une liste de codes selon une certaine reponse 
+      * @param liste_codes une liste de listes d entiers (une liste de codes)
+      * @param couple_reponse le couple de pions (BienPlaces, MalPlaces)
+      * @return une liste des scores de chaque code de la liste_codes 
+     *)
      let calcule_liste_score liste_codes couple_reponse =
           let rec calcule_liste_scoreRT liste_codes couple_reponse pos acc_liste =
                match liste_codes with
@@ -154,11 +178,17 @@ module Knuth (*:
 
           in calcule_liste_scoreRT liste_codes couple_reponse (-1) [] ;;
 
+    (** Calcule la liste contenant les codes ayant fait le score maximum de la liste des scores calculée avec la fonction 'calcule_liste_score'
+      * @param liste_codes une liste de listes d'entiers (une liste de codes)
+      * @param couple_reponse le couple de pions (BienPlaces, MalPlaces)
+      * @return une liste de codes ayant le plus grand score
+      *)
+
      let liste_codes_meme_score_maximum liste_codes couple_reponse =
-          let maximum_liste_score = max_liste ( calcule_liste_score liste_codes couple_reponse) in
+          let maximum_liste_score = max_liste ( calcule_liste_score liste_codes couple_reponse) in  (* on definit la valeur du score maximum *)
                let rec liste_codes_meme_score_maximumRT liste_codes couple_reponse pos acc =
                     match liste_codes with
-                         | h :: t when (pos+1) = List.length liste_codes                                                            -> acc
+                         | h :: t when (pos+1) = List.length liste_codes                                                            -> acc         (* Condition d'arrêt : lorsqu'on atteint la dernière position de la liste *)
                          | h :: t when (maximum_liste_score = (calcule_score liste_codes (List.nth liste_codes pos) couple_reponse))-> liste_codes_meme_score_maximumRT liste_codes couple_reponse (pos+1) (acc@[(List.nth liste_codes pos)])
                          | _                                                                                                        -> liste_codes_meme_score_maximumRT liste_codes couple_reponse (pos+1) acc
 

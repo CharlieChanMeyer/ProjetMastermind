@@ -278,6 +278,11 @@ module Code :
         *)
       let existence_valeur_negative code = List.exists (fun x -> x<0) code;; 
 
+      (** Calcule le couple de reponse en fonction d un code propose et du code secret 
+        * @param code une liste d entiers : le code propose
+        * @param vrai_code une liste d entiers : le code a deviner
+        * @return un couple de reponse de la forme (Pions_bien_places , Pions_mal_places)
+      *)
      let reponse code vrai_code =
         match code with
         | l when List.length l <> List.length vrai_code -> None                      (* reponse non calculable si les deux codes ne font pas la même longueur *)
